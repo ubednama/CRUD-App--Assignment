@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= tableName === 'categories' ? 'Categories' : 'Products' %></title>
+    <link rel="stylesheet" href="/stylesheets/index.css">
+    <link rel="stylesheet" href="/stylesheets/dropdown.css">
+    <link rel="stylesheet" href="/stylesheets/table.css">
+    <link rel="stylesheet" href="/stylesheets/button.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="<%= tableName === 'categories' ? '/' : '/products' %>">List of <%= tableName === 'categories' ? 'Categories' : 'Products' %></a></h1>
+        <div class="products">
+            <a href="<%= tableName === 'categories' ? '/products' : '/' %>">Check <%= tableName === 'categories' ? 'Products' : 'Categories' %></a>
+
+        </div>
+    </nav>
+    <div class="query-container">
+        <form class="create-container">
+            <input class=".input" type="text" id="newItemCategoryId" name="newItemId" style="width: 6%; display: <%= tableName === 'categories' ? 'none' : '' %>;" placeholder=" C ID">
+            <input class=".input" type="text" id="newItemId" name="newItemId" style="width: 6%;" placeholder="ID">
+            <input class=".input" type="text" id="newItemName" name="newItemName" required  placeholder="<%= title = tableName === 'categories' ? 'Category' : 'Product' %> Name">
+            <button class="btn btn-primary" type="submit" id="createButton" onclick="createNewItem(event)"> Create</button>
+        </form>
+        <div class="search-container">
+            <button type="button" id="clearButton" onclick="resetSearch()" style="<%= search ? 'display: block;' : 'display: none;' %>">X</button>
+            <input class=".input" type="text" id="itemSearch" placeholder="<%= search ? search : 'ID or Name' %>" required>
+            <button class="btn btn-primary" type="submit" id="findButton" onclick="searchItem(event)">Search</button>
+        </div>
+    </div>
+    <div>
+        <div class="dropdown">
+            <label for="limitDropdown">Show:</label>
+            <select id="limitDropdown" onchange="changePageLimit(this)">
+                <% for (let i = 1; i <= Math.min(totalResults,10); i++) { %>
+                    <option value="<%= i %>" <%= items.length == i ? 'selected' : '' %>><%= i %></option>
+                <% } %>
+            </select>
+            <span>entries</span>
+        </div>
+    <table id="categoryTable" style="width: 80%;">
+        <thead style="width: 100%;">
+            <tr>
+                <th style="width: 10%;">ID</th>
+                <th style="width: 30%;">Name</th>
+                <th style="width: <%= tableName === 'categories' ? '30%' : '0%' %>; display: <%= tableName === 'categories' ? '' : 'none' %>">Total Number of Products</th>
+                <th style="width: <%= tableName === 'categories' ? '0%' : '15%' %>; display: <%= tableName === 'categories' ?  'none' : '' %>">Category ID</th>
+                <th style="width: <%= tableName === 'categories' ? '0%' : '15%' %>; display: <%= tableName === 'categories' ?  'none' : '' %>">Category Name</th>
+                <th style="width: 30%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="table-body" style="width: 100%;">
+            <% if (items && items.length > 0) { %>
+                <% items.forEach((item, index) => { %>
+                    <tr class="categoryRow" style="display: <%=  1 < index < 10 ? 'table-row' : 'none' %>">
+                        <td><%= item.id %></td>
+                        <td><%= item.name %></td>
+                        <td style="width: <%= tableName === 'categories' ? '30%' : '0%' %>; display: <%= tableName === 'categories' ? '' : 'none' %>"><a href="/<%= item.id %>/products"><%= item.productCount %> <%= item.productCount === 1 ? 'Product' : 'Products' %></a></td>
+                        <td style="width: <%= tableName === 'categories' ? '0%' : '15%' %>; display: <%= tableName === 'categories' ?  'none' : '' %>"><%= item.categoryId %></td>
+                        <td style="width: <%= tableName === 'categories' ? '0%' : '15%' %>; display: <%= tableName === 'categories' ?  'none' : '' %>"><%= item.categoryName %></td>
+                        <td>
+                            <button class="btn btn-secondary" itemId="<%= item.id %>" itemName="<%= item.name %>" type="submit" onclick="updateItemFunction(event, this)">Update</button> 
+                            <button class="btn btn-danger" id="deleteButton" itemId="<%= item.id %>" type="submit" onclick="deleteItemFunction(event, this)">Delete</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="6"><%= message %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <div id="noResultsMessage" style="display: none; text-align: center; width: 80%;">No results found.</div>
+
+    <div class="page-container">
+        <div class="result">Showing <span id="start"><%= start %></span> to 
+            <span id="end"><%= isNaN(start) || start < 1 ? 0 : Math.max(start+items.length-1,0) %></span>
+            of <span id="total"></span><%= totalResults %> entries</div>
+        
+        <div>
+            <div class="pageStuff-container">
+                <div class="prev-page-box">
+                    <% if ( currentPage > 1) { %>
+                        <button id="prevPageButton" onclick="handlePageNavigation('prev')">Prev</button>
+                    <% } else { %>
+                        <button disabled>Prev</button>
+                    <% } %>
+                </div>
+                <div class="page-number-box">
+                    <span id="pageNumber"><%= currentPage %></span>
+                </div>
+                <div class="next-page-box">
+                    <% if (currentPage < totalPages) { %>
+                        <button id="nextPageButton" onclick="handlePageNavigation('next')">Next</button>
+                    <% } else { %>
+                        <button disabled>Next</button>
+                    <% } %>
+                </div>
+            </div>
+            <div id="pages"> Pages: <%= totalPages %></div>
+        </div>
+        
+    </div>
+</div>
+    <div id="updateMessage" class="updateMessage" style="display: none; text-align: center; padding-top: 5%; font-size: 1.2rem;">
+        <form class="modal-content">
+            <span class="close" id="closeButton">&times;</span>
+            <span id="updateCategoryName"></span>
+            <input class="input" type="text" id="updateCategoryNewName" placeholder="Enter New <%= tableName === 'categories' ? 'Category' : 'Product' %> Name" required>
+            <button type="submit" class="btn btn-primary" id="confirmUpdate">Update</button>
+        </form>
+    </div>
+
+    <div id="operationsMessage" style="display: none; text-align: center; padding-top: 5%; font-size: 1.6rem;">
+        <div class="ok-content">
+            <span id="operationCategoryName"></span><br>
+            <button type="submit" class="btn btn-success" id="ok-button">Ok</button>
+        </div>
+    </div>
+
+    <script>
+        let cP = '<%= currentPage %>'
+        let totalPages = `<%= totalPages %>`
+        console.log("h cp",cP, " tp", totalPages)
+        let totalResults = '<%= totalResults %>';
+        let tableLimit = isNaN(start) || start < 1 ? 0 : Math.max(start+items.length-1,0);
+        let limit = `<%= limit %>`
+        console.log("home l ",limit, totalResults)
+        let title = '<%= tableName === 'categories' ? 'Category' : 'Product' %>';
+        let tableName = `<%= tableName %>`
+        limit = Math.max(limit,1);
+        search = '<%= search %>';
+        document.getElementById('itemSearch').value = search
+    </script>
+    <script src="/javascripts/pagination.js"></script>
+    <script src="/javascripts/operations.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+.dropdown {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .dropdown label,
+  .dropdown select {
+    font-size: 16px;
+  }
+  
+  .dropdown select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .dropdown select option {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
