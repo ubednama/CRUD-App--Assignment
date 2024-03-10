@@ -32,7 +32,7 @@ class Product {
   }
 
   static findById(Id, page, limit, result) {
-    console.log("here bcackendd")
+    console.log("here backendd")
     sql.query('SELECT p.id, p.name, p.categoryId, c.name AS categoryName  FROM products p JOIN categories c ON p.categoryId = c.id WHERE p.id = ?', [Id], (err, res) => {
       if (err) {
         console.error('Error finding product by id:', err);
