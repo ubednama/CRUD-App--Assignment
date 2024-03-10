@@ -8,6 +8,12 @@ This is a CRUD (Create, Read, Update, Delete) application built using Node.js, E
 - Server-side pagination to efficiently manage large datasets.
 - Search functionality to filter data based on user input.
 
+## Screenshots
+
+![Categories page](https://github.com/ubednama/CRUD-App---ejs/assets/61332446/97293d86-5ce6-4700-af7c-3232fb0a45e6)
+![Screenshot 2024-03-10 131531](https://github.com/ubednama/CRUD-App---ejs/assets/61332446/788d6ce1-92e7-4b01-921f-0cef72d685fb)
+![Screenshot 2024-03-10 131601](https://github.com/ubednama/CRUD-App---ejs/assets/61332446/b8c0895b-a373-47f1-b652-c3e85699c839)
+
 ## Technologies Used
 
 - **Node.js**: JavaScript runtime environment.
